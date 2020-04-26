@@ -1,4 +1,4 @@
-# NetrexCore
+# Netrex
  A software for MinecraftPE written in TypeScript
  
 ## Overview
