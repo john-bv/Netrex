@@ -5,8 +5,7 @@
   "main": "app.ts",
   "license": "GPL-3.0",
   "scripts": {
-    "start:rcon": "node ./node_modules/ts-node/dist/bin.js -r tsconfig-paths/register rcontest.ts",
-    "start": "node ./node_modules/ts-node/dist/bin.js -r tsconfig-paths/register app.ts",
+    "start": "node ./node_modules/ts-node/dist/bin.js -r tsconfig-paths/register src/NetrexCore.ts",
     "start:mon": "node ./node_modules/nodemon/bin/nodemon.js --watch 'src/**/*.ts' --exec node ./node_modules/ts-node/dist/bin.js -r tsconfig-paths/register app.ts",
     "test": "jest --forceExit --coverage --verbose --detectOpenHandles",
     "tslint": "tslint --project tsconfig.json"

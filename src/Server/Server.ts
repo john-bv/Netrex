@@ -12,13 +12,19 @@
  *  (at your option) any later version.
  */
 import { EventEmitter } from 'events';
+import ConsoleExecuter from '@/Utils/ConsoleExecuter';
+import Command from '@/Command/Command';
 
 class Server extends EventEmitter {
     private static instance: Server|null;
+    private executer: ConsoleExecuter;
+    public commands: Map<string, Command>;
 
     constructor() {
         super();
         Server.instance = this;
+        this.executer = new ConsoleExecuter(this);
+        this.commands = new Map();
     }
 
     /**

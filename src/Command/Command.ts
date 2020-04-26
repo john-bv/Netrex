@@ -11,13 +11,8 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */
-import Server from '@/Server/Server';
+class Command {
 
-const server: Server = new Server();
+}
 
-/*
-try {
-    server.start();
-} catch (e) {
-    server.saveAll();
-}*/
+export default Command;
