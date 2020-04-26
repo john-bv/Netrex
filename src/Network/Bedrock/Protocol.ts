@@ -13,7 +13,7 @@
  */
 enum Protocol {
     /* Versions */
-    CURRENT_PROTOCOL = 389,
+    CURRENT_PROTOCOL = 401,
     PROTOCOL_VERSION = 9,
     SYSTEM_ADDRESSES = 10,
     /** Query and Raknet */

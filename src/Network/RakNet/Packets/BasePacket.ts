@@ -51,10 +51,14 @@ abstract class BasePacket {
      * Called when raknet wishes to decode the packet
      */
     protected decode(): void {
-        this.stream.offset = 1;
-        this.stream.buffer[0];
+        this.decodeHeader();
         this.decodeBody();
         return;
+    }
+
+    protected decodeHeader(): void {
+        this.stream.offset = 1;
+        this.id = this.stream.buffer[0];
     }
 
     /**
@@ -68,9 +72,13 @@ abstract class BasePacket {
      * Encodes the packet and returns it's binary stream
      */
     protected encode(): BinaryStream {
-        this.stream.writeByte(this.id);
+        this.encodeHeader();
         this.encodeBody();
         return this.stream;
+    }
+
+    protected encodeHeader(): void {
+        this.stream.writeByte(this.id);
     }
 
     protected encodeBody(): void {
