@@ -12,26 +12,37 @@
  *  (at your option) any later version.
  */
 import { EventEmitter } from 'events';
-import ConsoleExecuter from '@/utils/ConsoleExecuter';
-import Command from '@/command/Command';
+import Logger from '@/utils/Logger';
+import CommandManager from '@/command/CommandManager';
 
 class Server extends EventEmitter {
-    private static instance: Server|null;
-    private executer: ConsoleExecuter;
-    public commands: Map<string, Command>;
+    private static instance: Server;
+    private logger: Logger;
+    public commandManager: CommandManager;
 
     constructor() {
         super();
         Server.instance = this;
-        this.executer = new ConsoleExecuter(this);
-        this.commands = new Map();
+        this.logger = new Logger('Server');
+        this.commandManager = new CommandManager(this);
+    }
+
+    public start(): void {
+        this.logger.info('This is where the server starts up.');
     }
 
     /**
      * Gets the server instance
      */
-    public static getInstance(): Server|null {
+    public static getInstance(): Server {
         return Server.instance;
+    }
+
+    /**
+     * Gets the server logger.
+     */
+    public getLogger(): Logger {
+        return this.logger;
     }
 }
 

@@ -13,6 +13,7 @@
  */
 import Server from '@/server/Server';
 import ConsoleLogger from './ConsoleLogger';
+import ConsoleSender from '@/command/senders/ConsoleSender';
 const stdin = process.openStdin();
 
 class ConsoleExecuter {
@@ -28,13 +29,8 @@ class ConsoleExecuter {
     private register(): void {
         stdin.on('data', (d) => {
             const msg: string = d.toString();
-            const cmd: string = msg.split(' ')[0];
-            
-            if (this.server.commands.has(cmd)) {
-                this.server.commands.get(cmd);
-            } else {
-                this.logger.write('Invalid command');
-            }
+            const sender: ConsoleSender = new ConsoleSender();
+            this.server.commandManager.dispatch(sender, `/${msg}`);
         });
     }
 }

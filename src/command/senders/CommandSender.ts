@@ -11,14 +11,21 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */
-import Server from '@/server/Server';
+abstract class CommandSender {
+    private name: string;
 
-const server: Server = new Server();
+    constructor(name: string) {
+        this.name = name;
+    }
 
+    /**
+     * Gets the command senders name
+     */
+    public getName(): string {
+        return this.name;
+    }
 
-try {
-    server.start();
-} catch (e) {
-    //server.saveAll();
-    server.getLogger().error(e.stack);
+    public abstract sendMessage(msg: string): void;
 }
+
+export default CommandSender;

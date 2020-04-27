@@ -11,8 +11,17 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */
-abstract class CommandSender {
-    constructor() {
+import CommandSender from './CommandSender';
+import Server from '@/server/Server';
 
+class ConsoleSender extends CommandSender {
+    constructor() {
+        super('Console');
+    }
+    public sendMessage(msg: string): void {
+        Server.getInstance().getLogger().info(msg);
+        return;
     }
 }
+
+export default ConsoleSender;
