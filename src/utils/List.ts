@@ -11,7 +11,7 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */
-export class List extends Array<any> {
+class List extends Array<any> {
     /**
      * Chunks the list by size of chunks provided
      * @param {Number} size - Number of chunks to generate.

@@ -40,7 +40,7 @@ class TextFormat {
     }
 
     public static formatColorsChalk(str: string): string {
-        const regex: RegExp = /(?:§a|§b|§c|§d|§e|§f|§g|§h|§i|§k|§l|§m|§n|§o|§r|§[0-10])/ig;
+        const regex: RegExp = /(?:§[a-o]|§r|§[0-10])/g;
         const matches: RegExpMatchArray|null = str.match(regex);
         const results: Array<string> = TextFormat.cleanArray(str.split(regex));
         let final: string = '';
