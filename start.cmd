@@ -1,10 +1,17 @@
 @echo off
-if NOT EXIST ./node_module (
-    echo NOPE
-    pause > nul
-    ::npm i > nul
+
+if exist node_modules (
+    goto run
+) else (
+    goto install
 )
 
-npm run start > nul
-echo owo
-pause
+:install
+echo Installing needed dependencies, give this a moment.
+npm i > nul
+echo Done, attempting to start.
+goto run
+
+:run
+echo Starting...
+npm run "start"
