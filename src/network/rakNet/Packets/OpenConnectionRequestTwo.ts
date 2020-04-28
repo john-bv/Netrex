@@ -13,34 +13,33 @@
  */
 import BasePacket from './BasePacket';
 import Protocol, { SERVER_ID } from '@/network/bedrock/Protocol';
+import BinaryStream from '@/network/utils/BinaryStream';
 import Address from '@/network/Address';
 
-class OpenConnectionReplyTwo extends BasePacket {
+class OpenConnectionRequestTwo extends BasePacket {
     /** The maximum transfer unit */
     public mtuSize: number;
-    public serverSecure: boolean = false;
-    public clientAddress: Address = { ip: '0.0.0.0', port: 0, type: 4 };
+    public serverAddress: Address;
+    public clientId: number;
 
-    constructor(mtuSize: number) {
-        super(Protocol.OPEN_CONNECTION_REPLY_1);
-        this.mtuSize = mtuSize;
+    constructor(stream: BinaryStream) {
+        super(Protocol.OPEN_CONNECTION_REQUEST_1, stream);
+        this.decodeBody();
     }
 
     protected encodeBody(): void {
         this.getStream().writeMagic();
-        this.getStream().writeLong(SERVER_ID);
-        this.getStream().writeAddress(this.clientAddress);
-        this.getStream().writeByte(this.serverSecure ? 1 : 0);
-        this.getStream().writeShort(this.mtuSize);
+        this.getStream()
+            .writeAddress(this.serverAddress)
+            .writeShort(this.mtuSize)
+            .writeLong(this.clientId);
     }
 
     protected decodeBody(): void {
         this.getStream().readMagic();
-        // minecraft go heck magix
-        this.getStream().readLong();
-        this.clientAddress = this.getStream().readAddress();
-        this.serverSecure = this.getStream().readByte() === 1;
+        this.serverAddress = this.getStream().readAddress();
         this.mtuSize = this.getStream().readShort();
+        this.clientId = this.getStream().readLong();
     }
 }
-export default OpenConnectionReplyTwo;
+export default OpenConnectionRequestTwo;

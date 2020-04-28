@@ -26,6 +26,7 @@ abstract class NewIncomingConnection extends EncapsulatedPacket {
 
     constructor(stream: BinaryStream) {
         super(Protocol.NEW_INCOMING_CONNECTION, stream);
+        this.decode();
     }
 
     public encodeBody(): void {

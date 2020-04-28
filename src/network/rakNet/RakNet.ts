@@ -20,6 +20,13 @@ import List from '@/utils/List';
 import Connection from '@/network/Connection';
 import BinaryStream from '../utils/BinaryStream';
 import ServerEvent from '@/event/Server/ServerEvent';
+import UnconnectedPing from './Packets/UnconnectedPing';
+import UnconnectedPong from './Packets/UnconnectedPong';
+import OpenConnectionRequestOne from './Packets/OpenConnectionRequestOne';
+import IncompatibleProtocol from './Packets/IncompatibleProtocol';
+import OpenConnectionReplyOne from './Packets/OpenConnectionReplyOne';
+import OpenConnectionRequestTwo from './Packets/OpenConnectionRequestTwo';
+import OpenConnectionReplyTwo from './Packets/OpenConnectionReplyTwo';
 
 class RakNet {
     private server: Server;
@@ -143,13 +150,44 @@ class RakNet {
         try {
             const packetId = stream.buffer[0];
             const connection = this.getConnection(address);
+            
+            if (!connection) {
+                if (packetId === Protocol.UNCONNECTED_PING) {
+                    const ping = new UnconnectedPing(stream);
+                    const pk = new UnconnectedPong('Netrex', 10);
+                    pk.pingSendTime = ping.pingSendTime;
+                    this.sendStream(pk.encode(), address);
+                } else if (packetId === Protocol.OPEN_CONNECTION_REQUEST_1) {
+                    const req = new OpenConnectionRequestOne(stream);
+                    
+                    if (req.protocol !== Protocol.PROTOCOL_VERSION) {
+                        const pk = new IncompatibleProtocol();
+                        this.sendStream(pk.encode(), address);
+                    } else {
+                        const pk = new OpenConnectionReplyOne(req.mtuSize);
+                        this.sendStream(pk.encode(), address);
+                    }
+                } else if (packetId === Protocol.OPEN_CONNECTION_REQUEST_2) {
+                    const req = new OpenConnectionRequestTwo(stream);
 
-            if (connection !== undefined) {
-                switch (packetId) {
-                    /** Handle disconnected packets */
+                    const pk = new OpenConnectionReplyTwo(req.mtuSize);
+
+                    if (!this.hasConnection(address)) {
+                        const connection = new Connection(address, req.mtuSize);
+                        this.addConnection(connection);
+
+                        this.logger.debug('Created client for', `${address.ip}:${address.port}`)
+
+                        this.sendStream(pk.encode(), address);
+                    }
+                } else {
+                    this.logger.warn(`Unhandled packet[${packetId}] from ${address.ip}:${address.port}`);
+                    return;
                 }
             } else {
-                /** Handle connected clients */
+                //const pk = new IncompatibleProtocol();
+                //this.sendStream(pk.encode(), address);
+                this.logger.warn(`Unhandled GamePacket[${packetId}] from ${address.ip}:${address.port}`);
             }
 
         } catch (err) {

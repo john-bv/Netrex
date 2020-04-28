@@ -37,6 +37,13 @@ abstract class BasePacket {
     }
 
     /**
+     * Gets the packet name
+     */
+    public getName(): string {
+        return this.constructor.name;
+    }
+
+    /**
      * Updates binary stream on packet.
      * @param stream - Binary Stream
      * @param update - Whether to update packet id
@@ -50,7 +57,7 @@ abstract class BasePacket {
     /**
      * Called when raknet wishes to decode the packet
      */
-    protected decode(): this {
+    public decode(): this {
         this.decodeHeader();
         this.decodeBody();
         return this;
@@ -71,7 +78,7 @@ abstract class BasePacket {
     /**
      * Encodes the packet and returns it's binary stream
      */
-    protected encode(): BinaryStream {
+    public encode(): BinaryStream {
         this.encodeHeader();
         this.encodeBody();
         return this.stream;

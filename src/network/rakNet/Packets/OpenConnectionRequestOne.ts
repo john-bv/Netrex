@@ -13,30 +13,26 @@
  */
 import BasePacket from './BasePacket';
 import Protocol, { SERVER_ID } from '@/network/bedrock/Protocol';
+import BinaryStream from '@/network/utils/BinaryStream';
 
-class OpenConnectionReplyOne extends BasePacket {
+class OpenConnectionRequestOne extends BasePacket {
     /** The maximum transfer unit */
     public mtuSize: number;
-    public serverSecure: boolean = false;
+    public protocol: number;
 
-    constructor(mtuSize: number) {
-        super(Protocol.OPEN_CONNECTION_REPLY_1);
-        this.mtuSize = mtuSize;
+    constructor(stream: BinaryStream) {
+        super(Protocol.OPEN_CONNECTION_REQUEST_1, stream);
+        this.decodeBody();
     }
 
     protected encodeBody(): void {
-        this.getStream().writeMagic();
-        this.getStream().writeLong(SERVER_ID);
-        this.getStream().writeByte(this.serverSecure ? 1 : 0);
-        this.getStream().writeShort(this.mtuSize);
+        /** to do */
     }
 
     protected decodeBody(): void {
         this.getStream().readMagic();
-        // minecraft go heck magix
-        this.getStream().readLong();
-        this.serverSecure = this.getStream().readByte() === 1;
-        this.mtuSize = this.getStream().readShort();
+        this.protocol = this.getStream().readByte();
+        this.mtuSize = this.getStream().length;
     }
 }
-export default OpenConnectionReplyOne;
+export default OpenConnectionRequestOne;
