@@ -53,6 +53,10 @@ class Server extends EventEmitter {
     public getLogger(): Logger {
         return this.logger;
     }
+
+    public getRakNet(): RakNet {
+        return this.raknet;
+    }
 }
 
 export default Server;

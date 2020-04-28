@@ -23,8 +23,8 @@ class OpenConnectionRequestTwo extends BasePacket {
     public clientId: number;
 
     constructor(stream: BinaryStream) {
-        super(Protocol.OPEN_CONNECTION_REQUEST_1, stream);
-        this.decodeBody();
+        super(Protocol.OPEN_CONNECTION_REQUEST_2, stream);
+        this.decode();
     }
 
     protected encodeBody(): void {

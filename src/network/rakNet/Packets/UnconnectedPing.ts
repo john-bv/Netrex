@@ -21,7 +21,7 @@ class UnconnectedPing extends BasePacket {
 
     constructor(stream: BinaryStream) {
         super(Protocol.UNCONNECTED_PING, stream);
-        this.decodeBody();
+        this.decode();
     }
 
     protected decodeBody(): void {

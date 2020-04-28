@@ -22,7 +22,7 @@ class OpenConnectionRequestOne extends BasePacket {
 
     constructor(stream: BinaryStream) {
         super(Protocol.OPEN_CONNECTION_REQUEST_1, stream);
-        this.decodeBody();
+        this.decode();
     }
 
     protected encodeBody(): void {

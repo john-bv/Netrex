@@ -32,13 +32,13 @@ class RakNet {
     private server: Server;
     private socket: dgram.Socket | null;
     private logger: Logger;
-    private connections: List;
+    private connections: Connection[];
 
     constructor(server: Server) {
         this.server = server;
         this.logger = new Logger('RakNet');
         this.socket = null;
-        this.connections = new List();
+        this.connections = [];
     }
 
     /**
@@ -61,7 +61,6 @@ class RakNet {
                 port: remoteInfo.port
             };
 
-            this.logger.debug('SOCKET CONNECTION FROM: ' + address.ip + ":" + address.port + ' with ' + stream.toString());
             try {
                 this.handleSocketMessage(stream, address);
             } catch (e) {
@@ -90,7 +89,6 @@ class RakNet {
     public kill(): void {
         this.logger.warn('Forcefully killing raknet, this may cause issues if the server did not call this.');
         this.socket.close();
-        Server.getInstance(); // just to shut fucking ts up lolol
     }
 
     /**
@@ -108,14 +106,11 @@ class RakNet {
 
     /**
      * Gets a specific connection with provided address
-     * @param {String|Address} address - Address to get (if any)
+     * @param {Address} address - Address to get (if any)
      */
-    public getConnection(address: string|Address): Connection|undefined {
-        if (typeof address !== 'string') {
-            return this.connections.find((connection: any) => { return connection.getAddress() === address });
-        } else {
-            return this.connections.find((connection: any) => { return connection.getAddress().ip === address });
-        }
+    public getConnection(address: Address): Connection|undefined {
+        let res: Connection|undefined = this.connections.find(c => c.address.ip === address.ip && c.address.port === address.port && c.address.type === address.type);
+        return res;
     }
 
     /**
@@ -123,7 +118,7 @@ class RakNet {
      * @param {Address} address - Address to find
      */
     public hasConnection(address: Address): boolean {
-        return !(!this.getConnection(address));
+        return this.getConnection(address) !== undefined;
     }
 
     /**
@@ -131,7 +126,11 @@ class RakNet {
      * @param {Connection} connection - Connection to remove
      */
     public removeConnection(connection: Connection): boolean {
-        return this.connections.remove(connection);
+        const address: Address = connection.address;
+        const index: number = this.connections.findIndex((c: Connection) => { return c.address.ip === address.ip && c.address.port === address.port && c.address.type === address.type });
+        if (index === -1) return false;
+        this.connections.splice(index, 1);
+        return true;
     }
 
     /**
@@ -150,6 +149,8 @@ class RakNet {
         try {
             const packetId = stream.buffer[0];
             const connection = this.getConnection(address);
+
+            this.logger.debug(`Packet: ${packetId} recieved from: ${address.ip}:${address.port}`);
             
             if (!connection) {
                 if (packetId === Protocol.UNCONNECTED_PING) {
@@ -157,6 +158,7 @@ class RakNet {
                     const pk = new UnconnectedPong('Netrex', 10);
                     pk.pingSendTime = ping.pingSendTime;
                     this.sendStream(pk.encode(), address);
+                    return;
                 } else if (packetId === Protocol.OPEN_CONNECTION_REQUEST_1) {
                     const req = new OpenConnectionRequestOne(stream);
                     
@@ -173,12 +175,12 @@ class RakNet {
                     const pk = new OpenConnectionReplyTwo(req.mtuSize);
 
                     if (!this.hasConnection(address)) {
-                        const connection = new Connection(address, req.mtuSize);
+                        const connection = new Connection(address, req.mtuSize, this.server);
                         this.addConnection(connection);
-
-                        this.logger.debug('Created client for', `${address.ip}:${address.port}`)
-
+                        this.server.getLogger().info('Created session for', `${address.ip}:${address.port}`);
                         this.sendStream(pk.encode(), address);
+                    } else {
+                        this.logger.notice('Send start game.');
                     }
                 } else {
                     this.logger.warn(`Unhandled packet[${packetId}] from ${address.ip}:${address.port}`);
