@@ -149,8 +149,6 @@ class RakNet {
         try {
             const packetId = stream.buffer[0];
             const connection = this.getConnection(address);
-
-            this.logger.debug(`Packet: ${packetId} recieved from: ${address.ip}:${address.port}`);
             
             if (!connection) {
                 if (packetId === Protocol.UNCONNECTED_PING) {
@@ -172,8 +170,7 @@ class RakNet {
                 } else if (packetId === Protocol.OPEN_CONNECTION_REQUEST_2) {
                     const req = new OpenConnectionRequestTwo(stream);
 
-                    const pk = new OpenConnectionReplyTwo(req.mtuSize);
-
+                    const pk = new OpenConnectionReplyTwo(address, req.mtuSize);
                     if (!this.hasConnection(address)) {
                         const connection = new Connection(address, req.mtuSize, this.server);
                         this.addConnection(connection);

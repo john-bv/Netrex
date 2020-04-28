@@ -21,8 +21,9 @@ class OpenConnectionReplyTwo extends BasePacket {
     public serverSecure: boolean = false;
     public clientAddress: Address = { ip: '0.0.0.0', port: 0, type: 4 };
 
-    constructor(mtuSize: number) {
-        super(Protocol.OPEN_CONNECTION_REPLY_1);
+    constructor(address: Address, mtuSize: number) {
+        super(Protocol.OPEN_CONNECTION_REPLY_2);
+        this.clientAddress = address;
         this.mtuSize = mtuSize;
     }
 
@@ -30,8 +31,8 @@ class OpenConnectionReplyTwo extends BasePacket {
         this.getStream().writeMagic();
         this.getStream().writeLong(SERVER_ID);
         this.getStream().writeAddress(this.clientAddress);
-        this.getStream().writeByte(this.serverSecure ? 1 : 0);
         this.getStream().writeShort(this.mtuSize);
+        this.getStream().writeByte(this.serverSecure ? 1 : 0);
     }
 
     protected decodeBody(): void {
@@ -39,8 +40,8 @@ class OpenConnectionReplyTwo extends BasePacket {
         // minecraft go heck magix
         this.getStream().readLong();
         this.clientAddress = this.getStream().readAddress();
-        this.serverSecure = this.getStream().readByte() === 1;
         this.mtuSize = this.getStream().readShort();
+        this.serverSecure = this.getStream().readByte() === 1;
     }
 }
 export default OpenConnectionReplyTwo;
