@@ -16,6 +16,7 @@ import Address, { AddressType } from '../Address';
 import Protocol, { Magic } from '../bedrock/Protocol';
 import Vector3 from '@/math/Vector3';
 import Logger from '@/utils/Logger';
+import { Gamemode, GameruleType, Gamerule } from '@/network/rakNet/Interfaces';
 
 class BinaryStream {
     public buffer: Buffer;
@@ -500,7 +501,7 @@ class BinaryStream {
     }
 
     public toString(): string {
-        return 'BinaryStream[' + this.offset + ':' + this.toHex + ']';
+        return 'BinaryStream[' + this.offset + ':' + this.toHex(true) + ']';
     }
 }
 

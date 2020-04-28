@@ -1,0 +1,13 @@
+ 
+     _   _      _
+    | \ | |    | |
+    |  \| | ___| |_ _ __ _____  __
+    | . ` |/ _ \ __| '__/ _ \ \/ /
+    | |\  |  __/ |_| | |  __/>  <
+    |_| \_|\___|\__|_|  \___/_/\_\              
+    
+    A MCPE software written in TypeScript         
+    Developed and maintained by John (Olybear9)   
+
+    URL: https://github.com/Olybear9/Netrex
+    

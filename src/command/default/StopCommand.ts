@@ -25,7 +25,7 @@ class StopCommand extends Command {
     public onRun(sender: CommandSender, label: string, args: Array<string>): void {
         sender.sendMessage('Stopping server.');
         this.getServer().getLogger().warn('Stop command recieved.');
-        process.exit();
+        this.getServer().stop();
     }
 }
 

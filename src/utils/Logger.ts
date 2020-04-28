@@ -13,8 +13,6 @@
  */
 import chalk from 'chalk';
 
-const space: string = ' ';
-
 class Logger {
     private name: string;
 
@@ -22,29 +20,34 @@ class Logger {
         this.name = name;
     }
 
-    debug(msg: string) {
-        let errStr: any = chalk.green.bold('DEBUG') + space + `[${this.name}]`;
-        this.log(errStr, msg);
+    debug(msg: string, ...extra: any[]) {
+        let errStr: any = chalk.hex('#AAAAAA')(`[${this.name}/DEBUG]: ` + msg);
+        this.log(errStr, ...extra);
     }
 
-    info(msg: string) {
-        let errStr: any = chalk.blueBright.bold('INFO') + space + `[${this.name}]`;
-        this.log(errStr, msg);
+    info(msg: string, ...extra: any[]) {
+        let errStr: any = `[${this.name}/INFO]:`;
+        this.log(errStr, msg, ...extra);
     }
 
-    error(msg: string) {
-        let errStr: any = chalk.red.bold('ERROR') + space + `[${this.name}]`;
-        this.log(errStr, msg);
+    notice(msg: string, ...extra: any[]) {
+        let errStr: any = chalk.hex('#55FFFF')(`[${this.name}/NOTICE]: ` + msg);
+        this.log(errStr, ...extra);
     }
 
-    critical(msg: string) {
-        let errStr: any = chalk.redBright.bold('CRITICAL') + space + chalk.redBright(`[${this.name}] ` + msg);
-        this.log(errStr);
+    error(msg: string, ...extra: any[]) {
+        let errStr: any = chalk.redBright(`[${this.name}/ERROR]: ` + msg);
+        this.log(errStr, ...extra);
     }
 
-    warn(msg: string) {
-        let errStr: any = chalk.yellow.bold('WARN') + space + `[${this.name}]`;
-        this.log(errStr, msg);
+    critical(msg: string, ...extra: any[]) {
+        let errStr: any = chalk.red(`[${this.name}/CRITICAL]: ` + msg);
+        this.log(errStr, ...extra);
+    }
+
+    warn(msg: string, ...extra: any[]) {
+        let errStr: any = chalk.yellow.bold(`[${this.name}/WARNING]: ` + msg);
+        this.log(errStr, ...extra);
     }
 
     private log(...toLog: Array<string>) {

@@ -15,7 +15,7 @@ enum Protocol {
     /* Versions */
     CURRENT_PROTOCOL = 401,
     PROTOCOL_VERSION = 9,
-    SYSTEM_ADDRESSES = 10,
+    SYSTEM_ADDRESSES = 20, // Regular is 10
     /** Query and Raknet */
     CONNECTED_PING = 0x00,
     UNCONNECTED_PING = 0x01,

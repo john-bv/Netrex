@@ -22,11 +22,13 @@ import BinaryStream from '../utils/BinaryStream';
 import ServerEvent from '@/event/Server/ServerEvent';
 
 class RakNet {
+    private server: Server;
     private socket: dgram.Socket | null;
     private logger: Logger;
     private connections: List;
 
-    constructor() {
+    constructor(server: Server) {
+        this.server = server;
         this.logger = new Logger('RakNet');
         this.socket = null;
         this.connections = new List();
@@ -38,11 +40,28 @@ class RakNet {
      * @param port port to host on
      */
     public start(ip: string = '127.0.0.1', port: number = 19132): void {
-        this.logger.info('Starting on: ' + ip + ':' + port);
+        this.logger.debug('Starting session on: ' + ip + ':' + port);
         
         this.socket = dgram.createSocket('udp4');
         
-        this.socket.on('message', this.handleSocketMessage);
+        this.socket.on('message', (message: Buffer, remoteInfo: dgram.RemoteInfo) => {
+            if (!message.length) return;
+
+            const stream = new BinaryStream(message);
+            const address: Address = {
+                type: (remoteInfo.family === 'IPv4') ? 4 : 6,
+                ip: remoteInfo.address,
+                port: remoteInfo.port
+            };
+
+            this.logger.debug('SOCKET CONNECTION FROM: ' + address.ip + ":" + address.port + ' with ' + stream.toString());
+            try {
+                this.handleSocketMessage(stream, address);
+            } catch (e) {
+                this.logger.error(e.message);
+                this.logger.error(e.stack);
+            }
+        });
 
         this.socket.on('error', (err) => {
             this.logger.error(err.toString());
@@ -50,11 +69,11 @@ class RakNet {
         });
 
         this.socket.on('close', () => {
-
+            this.logger.error('Closing session on: ' + ip + ':' + port);
         });
 
         this.socket.bind(port, ip, () => {
-            this.logger.info('Server hosting on: ' + ip + ':' + port);
+            this.logger.notice('Server listening on: ' + ip + ':' + port);
         });
     }
 
@@ -63,8 +82,8 @@ class RakNet {
      */
     public kill(): void {
         this.logger.warn('Forcefully killing raknet, this may cause issues if the server did not call this.');
-        this.socket?.close();
-        Server.getInstance()?.constructor(); // just to shut fucking ts up lolol
+        this.socket.close();
+        Server.getInstance(); // just to shut fucking ts up lolol
     }
 
     /**
@@ -114,22 +133,13 @@ class RakNet {
      * @param address - Address to send to
      */
     public sendStream(stream: BinaryStream, address: Address): void {
-        this.socket?.send(stream.buffer, address.port, address.ip);
+        this.socket.send(stream.buffer, address.port, address.ip);
     }
 
     /**
      * Handles incoming and outgoing messages
      */
-    private async handleSocketMessage(message: Buffer, remoteInfo: dgram.RemoteInfo): Promise<void> {
-        if (!message.length) return;
-
-        const stream = new BinaryStream(message);
-        const address: Address = {
-            type: (remoteInfo.family === 'IPv4') ? 4 : 6,
-            ip: remoteInfo.address,
-            port: remoteInfo.port
-        };
-
+    private async handleSocketMessage(stream: BinaryStream, address: Address): Promise<void> {
         try {
             const packetId = stream.buffer[0];
             const connection = this.getConnection(address);
@@ -143,7 +153,7 @@ class RakNet {
             }
 
         } catch (err) {
-            this.logger.error(`[${err.code}:${err.message || 'NonSysErr'}] StackTrace: ${err.stack}`);
+            new Logger('RakNet').error(`[${err.code}:${err.message || 'NonSysErr'}] StackTrace: ${err.stack}`);
             return;
         }
     }

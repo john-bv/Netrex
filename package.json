@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "chalk": "^2.4.2",
-    "tslint": "^5.12.1"
+    "tslint": "^5.12.1",
+    "yaml": "^1.9.2"
   },
   "devDependencies": {
     "@types/jest": "^23.3.13",

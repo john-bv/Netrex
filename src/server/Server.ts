@@ -14,11 +14,13 @@
 import { EventEmitter } from 'events';
 import Logger from '@/utils/Logger';
 import CommandManager from '@/command/CommandManager';
+import RakNet from '@/network/rakNet/RakNet';
 
 class Server extends EventEmitter {
-    private static instance: Server;
-    private logger: Logger;
     public commandManager: CommandManager;
+    private static instance: Server;
+    private raknet?: RakNet;
+    private logger: Logger;
 
     constructor() {
         super();
@@ -28,7 +30,14 @@ class Server extends EventEmitter {
     }
 
     public start(): void {
-        this.logger.info('This is where the server starts up.');
+        this.raknet = new RakNet(this);
+        this.raknet.start();
+    }
+
+    public stop(): void {
+        this.logger.info('Server stopping...');
+        this.raknet.kill();
+        process.exit();
     }
 
     /**

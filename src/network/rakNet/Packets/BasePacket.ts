@@ -50,10 +50,10 @@ abstract class BasePacket {
     /**
      * Called when raknet wishes to decode the packet
      */
-    protected decode(): void {
+    protected decode(): this {
         this.decodeHeader();
         this.decodeBody();
-        return;
+        return this;
     }
 
     protected decodeHeader(): void {

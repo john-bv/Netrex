@@ -1,0 +1,23 @@
+#
+#      _   _      _
+#     | \ | |    | |
+#     |  \| | ___| |_ _ __ _____  __
+#     | . ` |/ _ \ __| '__/ _ \ \/ /
+#     | |\  |  __/ |_| | |  __/>  <
+#     |_| \_|\___|\__|_|  \___/_/\_\
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+Settings:
+  max-players: 50 # Set to -1 for unlimited (please note this may not work 100% of the time)
+  shutdown-message: "Server Closed" # Shut down messages
+  allow-dev: false # Whether or not to allow developer versions of netrex
+Query:
+  plugins: true # Allow querying of plugins
+  whitelist: true # Whether or not to show if whitelisted
+Plugins:
+  style: Typescript # Whether to load plugins as typescript or javascript
+  allow-source: true
