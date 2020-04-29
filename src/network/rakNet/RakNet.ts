@@ -184,9 +184,8 @@ class RakNet {
                     return;
                 }
             } else {
-                //const pk = new IncompatibleProtocol();
-                //this.sendStream(pk.encode(), address);
-                this.logger.warn(`Unhandled GamePacket[${packetId}] from ${address.ip}:${address.port}`);
+                connection.handleStream(stream);
+                return;
             }
 
         } catch (err) {

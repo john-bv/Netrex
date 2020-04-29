@@ -15,10 +15,12 @@ import { EventEmitter } from 'events';
 import Logger from '@/utils/Logger';
 import CommandManager from '@/command/CommandManager';
 import RakNet from '@/network/rakNet/RakNet';
+import PacketManager from '@/network/bedrock/PacketManager';
 
 class Server extends EventEmitter {
-    public commandManager: CommandManager;
     private static instance: Server;
+    public commandManager: CommandManager;
+    private packetManager: PacketManager;
     private raknet?: RakNet;
     private logger: Logger;
 
@@ -27,6 +29,7 @@ class Server extends EventEmitter {
         Server.instance = this;
         this.logger = new Logger('Server');
         this.commandManager = new CommandManager(this);
+        this.packetManager = new PacketManager();
     }
 
     public start(): void {
@@ -54,6 +57,16 @@ class Server extends EventEmitter {
         return this.logger;
     }
 
+    /**
+     * Gets PacketManager
+     */
+    public getPacketManager(): PacketManager {
+        return this.packetManager;
+    }
+
+    /**
+     * Gets raknet instance
+     */
     public getRakNet(): RakNet {
         return this.raknet;
     }

@@ -29,5 +29,5 @@ try {
     server.start();
 } catch (e) {
     //server.saveAll();
-    server.getLogger().error(e.stack);
+    server.getLogger().critical(e);
 }

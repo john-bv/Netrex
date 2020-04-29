@@ -17,6 +17,9 @@ import BasePacket from './rakNet/Packets/BasePacket';
 import RakNet from './rakNet/RakNet';
 import Server from '@/server/Server';
 import BinaryStream from './utils/BinaryStream';
+import PacketManager from './bedrock/PacketManager';
+import BaseGamePacket from './bedrock/Packets/BaseGamePacket';
+import PacketRecieveEvent from '@/event/Server/PacketRecieveEvent';
 
 class Connection {
     public static SINGLE_TICK = 50;
@@ -42,16 +45,16 @@ class Connection {
      * Very broad, but sends any packet to the connection (experimental)
      * @param packet BasePacket, sends any packet to the connection instance
      */
-    public sendPacket(packet: BasePacket): void {
+    public sendPacket(packet: BaseGamePacket): void {
         this.last = Date.now();
     }
 
     /**
-     * 
+     * This handles all game Packets through packet manager?
      * @param packet 
      */
-    public handlePacket(packet: BasePacket): void {
-
+    public handlePacket(packet: BaseGamePacket): void {
+        //asfdkjaslkfja;sdkfja;sdlkfjasd
     }
 
     /**
@@ -59,7 +62,23 @@ class Connection {
      * @param stream - Stream from raknet message
      */
     public handleStream(stream: BinaryStream): void {
+        const packetId: number = stream.buffer[0];
+        const pkManager: PacketManager = this.server.getPacketManager();
 
+        if (!pkManager.getPacket(packetId)) {
+            this.server.getLogger().error(`Unimplemented game packet: ${packetId} from: ${this.address.ip}:${this.address.port}`);
+            return;
+        } else {
+            try {
+                const packet: BaseGamePacket = pkManager.getPacket(packetId);
+                packet.setStream(stream);
+                packet.decode();
+                this.handlePacket(packet);
+                return;
+            } catch (err) {
+                this.server.getLogger().error(`Error while decoding packet: ${packetId} from: ${this.address.ip}:${this.address.port}\n[${err.code}:${err.message || 'NonSysErr'}] StackTrace: ${err.stack}`);
+            }
+        }
     }
 
     /**
