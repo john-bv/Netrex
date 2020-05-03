@@ -29,10 +29,6 @@ try {
     console.clear();
     console.log(netrex);
     server.start();
-
-    const Compiled: FormattedFile = Compiler.compile(resolve(__dirname, './'), 'Netrex_v1');
-    Compiled.save(resolve(__dirname, '../resources/Netrex_v1.netrex')); // save the compiled file
-    Compiled.extract(resolve(__dirname, '../resources/tests')); // extract the compile file
 } catch (e) {
     //server.saveAll();
     server.getLogger().critical(e);
