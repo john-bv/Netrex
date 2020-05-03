@@ -16,6 +16,7 @@
     "yaml": "^1.9.2"
   },
   "devDependencies": {
+    "@types/btoa": "^1.2.3",
     "@types/jest": "^23.3.13",
     "@types/node": "^10.17.13",
     "jest": "^23.6.0",

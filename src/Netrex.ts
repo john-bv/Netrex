@@ -16,6 +16,8 @@ import { resolve } from 'path';
 import Server from '@/server/Server';
 import YAML from 'yaml';
 import Logger from './utils/Logger';
+import Compiler from './compiler/Compiler';
+import FormattedFile from './compiler/utils/FormattedFile';
 
 const server: Server = new Server();
 const netrex: string = fs.readFileSync(resolve(__dirname, '../resources/Netrexinf.txt')).toString() || '';
@@ -27,6 +29,10 @@ try {
     console.clear();
     console.log(netrex);
     server.start();
+
+    const Compiled: FormattedFile = Compiler.compile(resolve(__dirname, './'), 'Netrex_v1');
+    Compiled.save(resolve(__dirname, '../resources/Netrex_v1.netrex')); // save the compiled file
+    Compiled.extract(resolve(__dirname, '../resources/tests')); // extract the compile file
 } catch (e) {
     //server.saveAll();
     server.getLogger().critical(e);

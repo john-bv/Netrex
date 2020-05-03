@@ -53,8 +53,9 @@ class Connection {
      * This handles all game Packets through packet manager?
      * @param packet 
      */
-    public handlePacket(packet: BaseGamePacket): void {
-        //asfdkjaslkfja;sdkfja;sdlkfjasd
+    public handleGamePacket(packet: BaseGamePacket): void {
+        this.last = Date.now();
+        //gamer
     }
 
     /**
@@ -73,7 +74,7 @@ class Connection {
                 const packet: BaseGamePacket = pkManager.getPacket(packetId);
                 packet.setStream(stream);
                 packet.decode();
-                this.handlePacket(packet);
+                this.handleGamePacket(packet);
                 return;
             } catch (err) {
                 this.server.getLogger().error(`Error while decoding packet: ${packetId} from: ${this.address.ip}:${this.address.port}\n[${err.code}:${err.message || 'NonSysErr'}] StackTrace: ${err.stack}`);

@@ -25,6 +25,9 @@ abstract class CommandSender {
         return this.name;
     }
 
+    /**
+     * To do: Move this to a executer
+     */
     public abstract sendMessage(msg: string): void;
 }
 
