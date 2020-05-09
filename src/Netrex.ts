@@ -20,14 +20,14 @@ import Compiler from './compiler/Compiler';
 import FormattedFile from './compiler/utils/FormattedFile';
 
 const server: Server = new Server();
-const netrex: string = fs.readFileSync(resolve(__dirname, '../resources/Netrexinf.txt')).toString() || '';
+const netrexText: string = fs.readFileSync(resolve(__dirname, '../resources/Netrexinf.txt')).toString() || '';
 
 
 // todo: Add server options, and type loading
 // add server options
 try {
     console.clear();
-    console.log(netrex);
+    console.log(netrexText);
     server.start();
 } catch (e) {
     //server.saveAll();
