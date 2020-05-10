@@ -29,7 +29,7 @@ class ServerInfoCommand extends Command {
         sender.sendMessage(`Server Address: ${this.getServer().Server_IP}`)
         sender.sendMessage(`Server Port: ${this.getServer().Port}`)
         sender.sendMessage(`Server MOTD: ${this.getServer().MOTD}`)
-        sender.sendMessage(`Max Players: ${this.getServer().MaxPlayers}`) // <== this is undefined for some reason
+        sender.sendMessage(`Max Players: ${this.getServer().MaxPlayers}`)
 
 
         
