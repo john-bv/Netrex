@@ -20,7 +20,7 @@ class Logger {
         this.name = name;
     }
 
-    debug(msg: string, ...extra: any[]) {
+    debug(msg: any, ...extra: any[]) {
         let errStr: any = chalk.hex('#AAAAAA')(`[${this.name}/DEBUG]: ` + msg);
         this.log(errStr, ...extra);
     }
@@ -50,7 +50,7 @@ class Logger {
         this.log(errStr, ...extra);
     }
 
-    private log(...toLog: Array<string>) {
+    private log(...toLog: string[]) {
         let date: Date = new Date();
         let arrTime: string = [
             date.getHours() >= 10 ? date.getHours() : '0' + date.getHours(),

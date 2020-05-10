@@ -35,12 +35,13 @@ class Server extends EventEmitter {
     public start(): void {
         this.raknet = new RakNet(this);
         this.raknet.start();
+        this.commandManager.registerDefaults();
     }
 
     public stop(): void {
         this.logger.info('Server stopping...');
         this.raknet.kill();
-        process.exit();
+        setTimeout(() => { process.exit() }, 4000);
     }
 
     /**

@@ -16,8 +16,9 @@ import CommandSender from '@/command/senders/CommandSender';
 
 class StopCommand extends Command {
     public prepare(): void {
-        this.permissions = [];
-        this.permissions.push('netrex.command.stop');
+        this.name = 'stop';
+        this.aliases = ['s'];
+        this.permissions = ['netrex.command.stop'];
         this.operators = true;
         this.restricted = true;
     }
