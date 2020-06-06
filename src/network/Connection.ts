@@ -174,9 +174,7 @@ class Connection {
      */
     public handleGamePacket(packet: EncapsulatedPacket): void {
         //gamer
-        packet.decode();
         this.server.getRakNet().getLogger().debug(`Client: ${this.id} tried sending GAME PACKET: ${packet.getId()}`);
-        console.log(packet);
     }
 
     /**
