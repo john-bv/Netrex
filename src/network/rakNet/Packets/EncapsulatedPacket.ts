@@ -15,12 +15,16 @@ import BasePacket from '@/network/rakNet/Packets/BasePacket';
 import Protocol from '@/network/bedrock/Protocol';
 import BinaryStream from '@/network/utils/BinaryStream';
 import Reliability from '@/network/rakNet/Reliability';
-
+/**
+ * Disconnectpacket
+ */
 class EncapsulatedPacket extends BasePacket {
     /**
      * Gets the packet from an encapsulated packet??
      */
-    public static fromEncapsulated<T extends EncapsulatedPacket>(this: new (stream: BinaryStream) => T, encapsulated: EncapsulatedPacket): T {
+    public static fromEncapsulated<T extends EncapsulatedPacket>(
+            this: new (stream: BinaryStream) => T, encapsulated: EncapsulatedPacket,
+        ): T {
         const pk = new this(encapsulated.getStream());
         pk.reliability = encapsulated.reliability;
         pk.length = encapsulated.length;

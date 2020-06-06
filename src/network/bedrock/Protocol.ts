@@ -91,8 +91,8 @@ enum Protocol {
     GUI_DATA_PICK_ITEM = 0x36,
     ADVENTURE_SETTINGS = 0x37,
     BLOCK_ACTOR_DATA = 0x38,
-    PLAYER_INPUT = 0x39,
-    LEVEL_CHUNK = 0x3a,
+    PLAYER_INPUT = 0x39, // fuck this
+    LEVEL_CHUNK = 0x3a, // Level
     SET_COMMANDS_ENABLED = 0x3b,
     SET_DIFFICULTY = 0x3c,
     CHANGE_DIMENSION = 0x3d,
@@ -116,9 +116,9 @@ enum Protocol {
     COMMAND_OUTPUT = 0x4f,
     UPDATE_TRADE = 0x50,
     UPDATE_EQUIP = 0x51,
-    RESOURCE_PACK_DATA_INFO = 0x52,
-    RESOURCE_PACK_CHUNK_DATA = 0x53,
-    RESOURCE_PACK_CHUNK_REQUEST = 0x54,
+    RESOURCE_PACK_DATA_INFO = 0x52, // send default pack
+    RESOURCE_PACK_CHUNK_DATA = 0x53, // send default pack
+    RESOURCE_PACK_CHUNK_REQUEST = 0x54, // send default pack
     TRANSFER = 0x55,
     PLAY_SOUND = 0x56,
     STOP_SOUND = 0x57,

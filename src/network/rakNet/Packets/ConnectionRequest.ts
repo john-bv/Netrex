@@ -14,8 +14,9 @@
 import BinaryStream from '@/network/utils/BinaryStream';
 import Protocol from '@/network/bedrock/Protocol';
 import BasePacket from './BasePacket';
+import EncapsulatedPacket from './EncapsulatedPacket';
 
-class ConnectionRequest extends BasePacket {
+class ConnectionRequest extends EncapsulatedPacket {
     public clientId: number;
     public pingSendTime: number;
     public secure: boolean;

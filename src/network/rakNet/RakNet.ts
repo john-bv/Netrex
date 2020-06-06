@@ -177,7 +177,7 @@ class RakNet {
                         this.server.getLogger().info('Created session for', `${address.ip}:${address.port}`);
                         this.sendStream(pk.encode(), address);
                     } else {
-                        this.logger.notice('Send start game.');
+                        this.logger.notice('Session creation flooded.');
                     }
                 } else {
                     this.logger.warn(`Unhandled packet[${packetId}] from ${address.ip}:${address.port}`);
@@ -192,6 +192,10 @@ class RakNet {
             new Logger('RakNet').error(`[${err.code}:${err.message || 'NonSysErr'}] StackTrace: ${err.stack}`);
             return;
         }
+    }
+
+    public getLogger(): Logger {
+        return this.logger;
     }
 }
 

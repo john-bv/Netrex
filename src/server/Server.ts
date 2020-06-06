@@ -20,6 +20,7 @@ import PacketManager from '@/network/bedrock/PacketManager';
 class Server extends EventEmitter {
     private static instance: Server;
     public commandManager: CommandManager;
+    private startTime: number;
     private packetManager: PacketManager;
     private raknet?: RakNet;
     private logger: Logger;
@@ -27,6 +28,7 @@ class Server extends EventEmitter {
     constructor() {
         super();
         Server.instance = this;
+        this.startTime = Math.floor(Date.now());
         this.logger = new Logger('Server');
         this.commandManager = new CommandManager(this);
         this.packetManager = new PacketManager();
@@ -70,6 +72,10 @@ class Server extends EventEmitter {
      */
     public getRakNet(): RakNet {
         return this.raknet;
+    }
+
+    public getTime(): number {
+        return Math.floor(Date.now()) - this.startTime;
     }
 }
 

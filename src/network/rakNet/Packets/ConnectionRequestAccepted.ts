@@ -14,12 +14,16 @@
 import Address, { AddressType } from '@/network/Address';
 import Protocol from '@/network/bedrock/Protocol';
 import BasePacket from './BasePacket';
+import EncapsulatedPacket from './EncapsulatedPacket';
 
-class ConnectionRequestAccepted extends BasePacket {
+class ConnectionRequestAccepted extends EncapsulatedPacket {
     public address: Address;
     public systemAddresses: Address[];
     public pingTime: number;
     public pongTime: number;
+    /*
+    public reliability: number;
+    public orderChannel?: number;*/
 
     constructor(address: Address, pingTime: number, pongTime: number) {
         super(Protocol.CONNECTION_REQUEST_ACCEPTED);

@@ -6,7 +6,6 @@
     |_| \_|\___|\__|_|  \___/_/\_\              
     
     A MCPE software written in TypeScript         
-    Developed and maintained by John (Olybear9)   
+    Developed and maintained by John (Bavfalcon9)
 
-    URL: https://github.com/Olybear9/Netrex
-    
+    URL: https://github.com/Bavfalcon9/Netrex
