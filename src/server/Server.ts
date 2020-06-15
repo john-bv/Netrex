@@ -11,17 +11,17 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */
-import { EventEmitter } from 'events';
 import Logger from '@/utils/Logger';
 import CommandManager from '@/command/CommandManager';
 import RakNet from '@/network/rakNet/RakNet';
-import PacketManager from '@/network/bedrock/PacketManager';
+import EventListener from '@/event/EventHandler';
+import BaseGamePacket from '@/network/bedrock/Packets/BaseGamePacket';
 
-class Server extends EventEmitter {
+class Server extends EventListener {
     private static instance: Server;
+
     public commandManager: CommandManager;
     private startTime: number;
-    private packetManager: PacketManager;
     private raknet?: RakNet;
     private logger: Logger;
 
@@ -31,18 +31,26 @@ class Server extends EventEmitter {
         this.startTime = Math.floor(Date.now());
         this.logger = new Logger('Server');
         this.commandManager = new CommandManager(this);
-        this.packetManager = new PacketManager();
     }
 
+    /**
+     * Called when the server starts.
+     */
     public start(): void {
         this.raknet = new RakNet(this);
         this.raknet.start();
         this.commandManager.registerDefaults();
+        this.reservedOn('PacketPrehandleRecieve', (pk: BaseGamePacket) => {
+            console.log('Got prehandled packet: ' + pk.getId());
+        });
     }
 
     public stop(): void {
         this.logger.debug('Server stopping...');
         this.raknet.kill();
+        this.logger.debug('Flushing ' + this.totalListenerCount + ' event listeners');
+        this.clearAll();
+        this.clearAllReserved();
         setTimeout(() => { process.exit() }, 4000);
     }
 
@@ -58,13 +66,6 @@ class Server extends EventEmitter {
      */
     public getLogger(): Logger {
         return this.logger;
-    }
-
-    /**
-     * Gets PacketManager
-     */
-    public getPacketManager(): PacketManager {
-        return this.packetManager;
     }
 
     /**

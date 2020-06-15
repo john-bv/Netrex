@@ -18,6 +18,8 @@ import Server from '@/server/Server';
 import Protocol from './Protocol';
 import BinaryStream from '../utils/BinaryStream';
 import Login from './Packets/Login';
+import PacketRecieveEvent from '@/event/Server/PacketRecieveEvent';
+import PacketPrehandleRecieveEvent from '@/event/Server/PacketPrehandleRecieveEvent';
 
 class PacketManager {
     private packetLibrary: Map<Protocol, any>;
@@ -67,7 +69,15 @@ class PacketManager {
             } else {
                 let pk: any = this.packetLibrary.get(id);
                 pk = new pk(stream);
+
+                let ev: any = new PacketPrehandleRecieveEvent(pk, connection);
+                server.emit('PacketPrehandleRecieve', ev);
                 pk.decode();
+                
+                ev = new PacketRecieveEvent(pk, connection);
+                pk = ev.getPacket();
+                server.emit('PacketRecieve', ev);
+
                 pk.handleInbound(connection, server, raknet);
                 return pk;
             }   

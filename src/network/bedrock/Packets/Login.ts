@@ -39,7 +39,9 @@ class Login extends BaseGamePacket {
 
     constructor(stream: BinaryStream) {
         super(Protocol.LOGIN, stream);
+    }
 
+    public decodeBody() {
         this.protocol = this.getStream().readInt();
 
         const str = this.getStream().readString();

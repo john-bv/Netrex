@@ -31,6 +31,7 @@ import IncompatibleProtocol from './rakNet/Packets/IncompatibleProtocol';
 import ConnectionRequestAccepted from './rakNet/Packets/ConnectionRequestAccepted';
 import Reliability from './rakNet/Reliability';
 import zlib from 'zlib';
+import PacketSendEvent from '@/event/Server/PacketSendEvent';
 
 /**
  * Disclaimer, this is in reference to: 
@@ -178,7 +179,7 @@ class Connection {
         const server: Server = this.server;
         const rakNet: RakNet = this.server.getRakNet();
 
-        return zlib.unzip(packet.getStream().buffer.slice(1), { finishFlush: zlib.constants.Z_FULL_FLUSH }, (err: Error | null, buffer: Buffer): void => {
+        return zlib.unzip(packet.getStream().buffer.slice(1), { finishFlush: zlib.constants.Z_SYNC_FLUSH, chunkSize: packet.getStream().buffer.slice(1).length }, (err: Error | null, buffer: Buffer): void => {
             try {
                 if (!err) {
                     const pStream = new BinaryStream(buffer);
