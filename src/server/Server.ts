@@ -41,7 +41,7 @@ class Server extends EventEmitter {
     }
 
     public stop(): void {
-        this.logger.info('Server stopping...');
+        this.logger.debug('Server stopping...');
         this.raknet.kill();
         setTimeout(() => { process.exit() }, 4000);
     }

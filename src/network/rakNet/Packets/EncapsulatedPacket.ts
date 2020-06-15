@@ -20,7 +20,7 @@ import Reliability from '@/network/rakNet/Reliability';
  */
 class EncapsulatedPacket extends BasePacket {
     /**
-     * Gets the packet from an encapsulated packet??
+     * Instansiates a new instance of the extended class
      */
     public static fromEncapsulated<T extends EncapsulatedPacket>(
             this: new (stream: BinaryStream) => T, encapsulated: EncapsulatedPacket,

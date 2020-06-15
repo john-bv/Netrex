@@ -11,24 +11,26 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */
-import Protocol from '@/network/bedrock/Protocol';
 import Address from './Address';
 import BasePacket from './rakNet/Packets/BasePacket';
-import RakNet from './rakNet/RakNet';
+import ConnectionRequest from './rakNet/Packets/ConnectionRequest';
+import ConnectedPing from './rakNet/Packets/ConnectedPing';
+import Protocol from '@/network/bedrock/Protocol';
 import Server from '@/server/Server';
 import BinaryStream from './utils/BinaryStream';
 import PacketManager from './bedrock/PacketManager';
 import BaseGamePacket from './bedrock/Packets/BaseGamePacket';
 import PacketRecieveEvent from '@/event/Server/PacketRecieveEvent';
 import AcknowledgePacket from './rakNet/Packets/AcknowledgePacket';
+import RakNet from './rakNet/RakNet';
 import Datagram from './rakNet/Packets/Datagram';
 import BitFlag from './utils/BitFlag';
+import Util from 'util';
 import EncapsulatedPacket from './rakNet/Packets/EncapsulatedPacket';
 import IncompatibleProtocol from './rakNet/Packets/IncompatibleProtocol';
 import ConnectionRequestAccepted from './rakNet/Packets/ConnectionRequestAccepted';
 import Reliability from './rakNet/Reliability';
-import ConnectionRequest from './rakNet/Packets/ConnectionRequest';
-import ConnectedPing from './rakNet/Packets/ConnectedPing';
+import zlib from 'zlib';
 
 /**
  * Disclaimer, this is in reference to: 
@@ -167,14 +169,32 @@ class Connection {
         this.packetQueue.reset();
     }
 
-
     /**
      * This handles all game Packets through packet manager?
      * @param packet 
      */
     public handleGamePacket(packet: EncapsulatedPacket): void {
-        //gamer
-        this.server.getRakNet().getLogger().debug(`Client: ${this.id} tried sending GAME PACKET: ${packet.getId()}`);
+        const connection: Connection = this;
+        const server: Server = this.server;
+        const rakNet: RakNet = this.server.getRakNet();
+
+        return zlib.unzip(packet.getStream().buffer.slice(1), { finishFlush: zlib.constants.Z_FULL_FLUSH }, (err: Error | null, buffer: Buffer): void => {
+            try {
+                if (!err) {
+                    const pStream = new BinaryStream(buffer);
+                    while (!pStream.feof()) {
+                        const stream = new BinaryStream(pStream.readString());
+                        rakNet.gamePacketHandler.handleGamePacket(stream, connection, server, rakNet);
+                    }
+                } else {
+                    rakNet.getLogger().error(`Failed to read stream, ${err.stack}`);
+                    console.log(buffer);
+                    return;
+                }
+            } catch (e) {
+                rakNet.getLogger().error(`Error while prehandling GamePacket from ${connection.address.ip}: ${e.message}`);
+            }
+        });
     }
 
     /**
@@ -182,7 +202,6 @@ class Connection {
      * @param packet Packet
      */
     public handleEncapsulated(packet: EncapsulatedPacket): void {
-
         if (packet.getId() === Protocol.CONNECTION_REQUEST) {
             const pk: ConnectionRequest = ConnectionRequest.fromEncapsulated(packet).decode();
             this.id = pk.clientId;
@@ -232,21 +251,17 @@ class Connection {
         this.sendPacket(packet, true);
     }
 
-
     /**
      * Handles the stream directly from raknet
      * @param stream - Stream from raknet message
      */
     public handleStream(stream: BinaryStream): void {
         const packetId: number = stream.buffer[0];
-        const pkManager: PacketManager = this.server.getPacketManager();
 
         if (packetId & BitFlag.ACK) {
             // handle ACK
-
         } else if (packetId & BitFlag.NAK) {
             // handle NAK
-            // 
         } else {
             // datagramQueue
             return this.handleDatagram(Datagram.fromBinary(stream));
@@ -286,6 +301,43 @@ class Connection {
         }
 
         // send packet queue here
+        // SKID from: https://github.com/BedrockJS/Bedrock.js/blob/master/src/Client.ts#L202-L236
+        // will touch this up eventually, i just need to get the framework ready
+        if (this.ACKQueue.ids.length) {
+            this.server.getRakNet().sendStream(this.ACKQueue.encode(), this.address);
+            this.ACKQueue.reset();
+        }
+
+        if (this.NAKQueue.ids.length) {
+            this.server.getRakNet().sendStream(this.NAKQueue.encode(), this.address);
+            this.NAKQueue.reset();
+        }
+
+        if (this.datagramQueue.length) {
+            const limit = 16;
+            let i = 0;
+            this.datagramQueue.forEach(async (datagram, index) => {
+                if (i > limit) return;
+
+                this.recoveryQueue.set(datagram.sequenceNumber, datagram);
+                this.server.getRakNet().sendStream(datagram.encode(), this.address);
+                this.datagramQueue.splice(index, 1);
+
+                i++;
+            })
+        }
+
+        if (this.recoveryQueue.size) {
+            // TODO: Check time
+            this.recoveryQueue.forEach((pk, seq) => {
+                this.datagramQueue.push(pk);
+                this.recoveryQueue.delete(seq);
+            })
+        }
+
+        if (this.packetQueue.packets.length) {
+            this.sendPacketQueue();
+        }
     }
 }
 

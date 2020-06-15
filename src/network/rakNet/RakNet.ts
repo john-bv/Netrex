@@ -27,8 +27,10 @@ import IncompatibleProtocol from './Packets/IncompatibleProtocol';
 import OpenConnectionReplyOne from './Packets/OpenConnectionReplyOne';
 import OpenConnectionRequestTwo from './Packets/OpenConnectionRequestTwo';
 import OpenConnectionReplyTwo from './Packets/OpenConnectionReplyTwo';
+import PacketManager from '../bedrock/PacketManager';
 
 class RakNet {
+    public gamePacketHandler: PacketManager;
     private server: Server;
     private socket: dgram.Socket | null;
     private logger: Logger;
@@ -39,6 +41,7 @@ class RakNet {
         this.logger = new Logger('RakNet');
         this.socket = null;
         this.connections = [];
+        this.gamePacketHandler = new PacketManager();
     }
 
     /**
@@ -75,7 +78,7 @@ class RakNet {
         });
 
         this.socket.on('close', () => {
-            this.logger.error('Closing session on: ' + ip + ':' + port);
+            this.logger.debug('Closing session on: ' + ip + ':' + port);
         });
 
         this.socket.bind(port, ip, () => {
@@ -87,7 +90,7 @@ class RakNet {
      * Forcefully kills raknet (this will not close all connections, and will disconnect the socket and kill the process)
      */
     public kill(): void {
-        this.logger.warn('Forcefully killing raknet, this may cause issues if the server did not call this.');
+        this.logger.debug('Forcefully killing raknet, this may cause issues if the server did not call this.');
         this.socket.close();
     }
 
@@ -194,6 +197,10 @@ class RakNet {
         }
     }
 
+    /**
+     * Gets the raknet logger
+     * @return {Logger}
+     */
     public getLogger(): Logger {
         return this.logger;
     }

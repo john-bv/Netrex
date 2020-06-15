@@ -12,14 +12,23 @@
  *  (at your option) any later version.
  */
 import BinaryStream from '../../utils/BinaryStream';
+import Connection from '@/network/Connection';
+import RakNet from '@/network/rakNet/RakNet';
+import Server from '@/server/Server';
+import Protocol from '../Protocol';
 
-abstract class BaseGamePacket {
-    private id: number;
+class BaseGamePacket {
+    /** Whether or not the packet is inbound */
+    public isInbound: boolean;
+    /** The id of the packet */
+    protected id: number;
+    /** The stream or "Buffer" of the packet */
     private stream: BinaryStream;
 
-    constructor(packetId: number, stream?: BinaryStream) {
-        this.id = packetId;
+    constructor(id: Protocol, stream?: BinaryStream) {
+        this.id = id;
         this.stream = stream || new BinaryStream();
+        this.isInbound = !!stream;
     }
 
     /**
@@ -90,6 +99,16 @@ abstract class BaseGamePacket {
 
     protected encodeBody(): void {
         return;
+    }
+
+    /**
+     * Handle the incoming packet.
+     * @param connection Connection from manager
+     * @param server Server object
+     * @param raknet Raknet
+     */
+    public handleInbound(connection: Connection, server: Server, raknet: RakNet): any {
+        return new Error('Method not implemented.');
     }
 }
 
