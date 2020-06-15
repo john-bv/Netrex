@@ -16,6 +16,7 @@ import CommandManager from '@/command/CommandManager';
 import RakNet from '@/network/rakNet/RakNet';
 import EventListener from '@/event/EventHandler';
 import BaseGamePacket from '@/network/bedrock/Packets/BaseGamePacket';
+import PacketPrehandleRecieveEvent from '@/event/Server/PacketPrehandleRecieveEvent';
 
 class Server extends EventListener {
     private static instance: Server;
@@ -40,8 +41,8 @@ class Server extends EventListener {
         this.raknet = new RakNet(this);
         this.raknet.start();
         this.commandManager.registerDefaults();
-        this.reservedOn('PacketPrehandleRecieve', (pk: BaseGamePacket) => {
-            console.log('Got prehandled packet: ' + pk.getId());
+        this.reservedOn('PacketPrehandleRecieve', (ev: PacketPrehandleRecieveEvent) => {
+            console.log('Got prehandled packet: ' + ev.getPacket().getId());
         });
     }
 
