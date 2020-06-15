@@ -1,11 +1,1 @@
-     _   _      _
-    | \ | |    | |
-    |  \| | ___| |_ _ __ _____  __
-    | . ` |/ _ \ __| '__/ _ \ \/ /
-    | |\  |  __/ |_| | |  __/>  <
-    |_| \_|\___|\__|_|  \___/_/\_\              
-    
-    A MCPE software written in TypeScript         
-    Developed and maintained by John (Bavfalcon9)
-
-    URL: https://github.com/Bavfalcon9/Netrex
+ICAgICBfICAgXyAgICAgIF8KICAgIHwgXCB8IHwgICAgfCB8CiAgICB8ICBcfCB8IF9fX3wgfF8gXyBfXyBfX19fXyAgX18KICAgIHwgLiBgIHwvIF8gXCBfX3wgJ19fLyBfIFwgXC8gLwogICAgfCB8XCAgfCAgX18vIHxffCB8IHwgIF9fLz4gIDwKICAgIHxffCBcX3xcX19ffFxfX3xffCAgXF9fXy9fL1xfXCAgICAgICAgICAgICAgCiAgICAKICAgIEEgTUNQRSBzb2Z0d2FyZSB3cml0dGVuIGluIFR5cGVTY3JpcHQgICAgICAgICAKICAgIERldmVsb3BlZCBhbmQgbWFpbnRhaW5lZCBieSBKb2huIChCYXZmYWxjb245KQoKICAgIFVSTDogaHR0cHM6Ly9naXRodWIuY29tL0JhdmZhbGNvbjkvTmV0cmV4

@@ -18,10 +18,10 @@ import YAML from 'yaml';
 import Logger from './utils/Logger';
 import Compiler from './compiler/Compiler';
 import FormattedFile from './compiler/utils/FormattedFile';
+import atob from 'atob';
 
 const server: Server = new Server();
-const netrexText: string = fs.readFileSync(resolve(__dirname, '../resources/Netrexinf.txt')).toString() || '';
-
+const netrexText: string = atob(fs.readFileSync(resolve(__dirname, '../resources/Netrexinf.txt')).toString() || '');
 
 // todo: Add server options, and type loading
 // add server options

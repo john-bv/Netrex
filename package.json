@@ -11,6 +11,8 @@
     "tslint": "tslint --project tsconfig.json"
   },
   "dependencies": {
+    "@types/atob": "^2.1.2",
+    "atob": "^2.1.2",
     "chalk": "^2.4.2",
     "tslint": "^5.12.1",
     "yaml": "^1.9.2"
