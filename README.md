@@ -1,3 +1,5 @@
+# Discontinuation
+ This **BRANCH** is discontinued in favor of `github.com/Netrex/tree/Deno`
 # Netrex
  A software for MinecraftPE written in TypeScript
  
