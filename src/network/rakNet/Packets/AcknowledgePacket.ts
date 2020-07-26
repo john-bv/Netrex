@@ -11,7 +11,7 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */
-import BasePacket from './BasePacket';
+import BasePacket from '../../BasePacket';
 import Protocol from '@/network/bedrock/Protocol';
 import BinaryStream from '@/network/utils/BinaryStream';
 

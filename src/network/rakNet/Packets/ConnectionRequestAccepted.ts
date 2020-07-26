@@ -13,7 +13,7 @@
  */
 import Address, { AddressType } from '@/network/Address';
 import Protocol from '@/network/bedrock/Protocol';
-import BasePacket from './BasePacket';
+import BasePacket from '../../BasePacket';
 import EncapsulatedPacket from './EncapsulatedPacket';
 
 class ConnectionRequestAccepted extends EncapsulatedPacket {

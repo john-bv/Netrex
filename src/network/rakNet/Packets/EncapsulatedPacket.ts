@@ -11,7 +11,7 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */
-import BasePacket from '@/network/rakNet/Packets/BasePacket';
+import BasePacket from '@/network/BasePacket';
 import Protocol from '@/network/bedrock/Protocol';
 import BinaryStream from '@/network/utils/BinaryStream';
 import Reliability from '@/network/rakNet/Reliability';

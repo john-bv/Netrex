@@ -11,13 +11,14 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */
-import BinaryStream from '../../utils/BinaryStream';
+import BinaryStream from './utils/BinaryStream';
+import Protocol from './bedrock/Protocol';
 
 abstract class BasePacket {
     private id: number;
     private stream: BinaryStream;
 
-    constructor(packetId: number, stream?: BinaryStream) {
+    constructor(packetId: Protocol, stream?: BinaryStream) {
         this.id = packetId;
         this.stream = stream || new BinaryStream();
     }
@@ -64,7 +65,7 @@ abstract class BasePacket {
     }
 
     protected decodeHeader(): void {
-        this.stream.offset = 1;
+        this.stream.increaseOffset(1);
         this.id = this.stream.buffer[0];
     }
 

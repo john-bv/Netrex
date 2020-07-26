@@ -11,20 +11,13 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */
-import BasePacket from '../../BasePacket';
-import Protocol, { SERVER_ID } from '@/network/bedrock/Protocol';
+import EncapsulatedPacket from "./EncapsulatedPacket";
+import BinaryStream from "@/network/utils/BinaryStream";
+import Protocol from "@/network/bedrock/Protocol";
 
-class IncompatibleProtocol extends BasePacket {
-    constructor() {
-        super(Protocol.INCOMPATIBLE_PROTOCOL);
-    }
-
-    protected encodeBody() {
-        return this.getStream()
-            .writeByte(Protocol.PROTOCOL_VERSION)
-            .writeMagic()
-            .writeLong(SERVER_ID);
+class GamePacketWrapper extends EncapsulatedPacket {
+    constructor(stream: BinaryStream) {
+        super(Protocol.GAME_PACKET_WRAPPER, stream)
     }
 }
-
-export default IncompatibleProtocol;
+export default GamePacketWrapper;

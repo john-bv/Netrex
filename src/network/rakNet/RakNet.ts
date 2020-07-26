@@ -163,8 +163,12 @@ class RakNet {
                 } else if (packetId === Protocol.OPEN_CONNECTION_REQUEST_1) {
                     const req = new OpenConnectionRequestOne(stream);
                     
-                    if (req.protocol !== Protocol.PROTOCOL_VERSION) {
+                    if (req.protocol < Protocol.PROTOCOL_VERSION) {
                         const pk = new IncompatibleProtocol();
+                        this.sendStream(pk.encode(), address);
+                    } else if (req.protocol > Protocol.PROTOCOL_VERSION) {
+                        this.server.getLogger().info(`${address.ip}:${address.port} Has a newer version of raknet, allowing. Things may break.`);
+                        const pk = new OpenConnectionReplyOne(req.mtuSize);
                         this.sendStream(pk.encode(), address);
                     } else {
                         const pk = new OpenConnectionReplyOne(req.mtuSize);

@@ -52,7 +52,7 @@ class Server extends EventListener {
         this.logger.debug('Flushing ' + this.totalListenerCount + ' event listeners');
         this.clearAll();
         this.clearAllReserved();
-        setTimeout(() => { process.exit() }, 4000);
+        process.exit();
     }
 
     /**

@@ -12,7 +12,7 @@
  *  (at your option) any later version.
  */
 import Address from './Address';
-import BasePacket from './rakNet/Packets/BasePacket';
+import BasePacket from './BasePacket';
 import ConnectionRequest from './rakNet/Packets/ConnectionRequest';
 import ConnectedPing from './rakNet/Packets/ConnectedPing';
 import Protocol from '@/network/bedrock/Protocol';
@@ -32,6 +32,7 @@ import ConnectionRequestAccepted from './rakNet/Packets/ConnectionRequestAccepte
 import Reliability from './rakNet/Reliability';
 import zlib from 'zlib';
 import PacketSendEvent from '@/event/Server/PacketSendEvent';
+import GamePacketWrapper from './rakNet/Packets/GamePacketWrapper';
 
 /**
  * Disclaimer, this is in reference to: 
@@ -178,18 +179,20 @@ class Connection {
         const connection: Connection = this;
         const server: Server = this.server;
         const rakNet: RakNet = this.server.getRakNet();
+        const payload: Buffer = packet.getStream().buffer.slice(1);
 
-        return zlib.unzip(packet.getStream().buffer.slice(1), { finishFlush: zlib.constants.Z_SYNC_FLUSH, chunkSize: packet.getStream().buffer.slice(1).length }, (err: Error | null, buffer: Buffer): void => {
+        return zlib.unzip(payload, (err: Error | null, buffer: Buffer): void => {
             try {
                 if (!err) {
-                    const pStream = new BinaryStream(buffer);
-                    while (!pStream.feof()) {
-                        const stream = new BinaryStream(pStream.readString());
+                    const payloadStream = new BinaryStream(buffer);
+                    rakNet.getLogger().debug(payloadStream.buffer[0]);
+                    while (!payloadStream.feof()) {
+                        const stream = new BinaryStream(payloadStream.readString());
                         rakNet.gamePacketHandler.handleGamePacket(stream, connection, server, rakNet);
                     }
                 } else {
                     rakNet.getLogger().error(`Failed to read stream, ${err.stack}`);
-                    console.log(buffer);
+                    console.error(err);
                     return;
                 }
             } catch (e) {
@@ -210,7 +213,6 @@ class Connection {
             reply.reliability = Reliability.Unreliable;
             reply.orderChannel = 0;
             this.sendPacket(reply, true);
-            
         } else if (packet.getId() === Protocol.NEW_INCOMING_CONNECTION) {
             // Add the player
             //this.server.addPlayer(this, packet);
@@ -220,7 +222,6 @@ class Connection {
         } else if (packet.getId() === Protocol.CONNECTED_PONG) {
             /** kek */
         } else if (packet.getId() === Protocol.GAME_PACKET_WRAPPER) {
-            class GamePacketWrapper extends EncapsulatedPacket { constructor(stream: BinaryStream) { super(Protocol.GAME_PACKET_WRAPPER, stream) } }
             this.handleGamePacket(GamePacketWrapper.fromEncapsulated(packet));
         } else {
             this.server.getLogger().critical('ERROR: Invalid packet: ' + packet.getId());
@@ -236,9 +237,24 @@ class Connection {
 
         const pkList: EncapsulatedPacket[] = datagram.packets;
 
-        /**
-         * Do ack and nak in the future, but fuck it for now
-         */
+        const diff = datagram.sequenceNumber - this.lastSequenceNumber;
+
+        if (this.NAKQueue.ids.length) {
+            const index = this.NAKQueue.ids.findIndex(i => i === datagram.sequenceNumber)
+            if (index !== -1) this.NAKQueue.ids.splice(index, 1);
+
+            if (diff !== 1) {
+                for (let i = this.lastSequenceNumber + 1; i < datagram.sequenceNumber; i++) {
+                    this.NAKQueue.ids.push(i);
+                }
+            }
+        }
+
+        this.ACKQueue.ids.push(datagram.sequenceNumber);
+
+        if (diff >= 1) {
+            this.lastSequenceNumber = datagram.sequenceNumber;
+        }
         
         pkList.forEach((pk) => {
             this.handleEncapsulated(pk);

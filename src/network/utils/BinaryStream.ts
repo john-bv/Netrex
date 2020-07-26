@@ -491,6 +491,10 @@ class BinaryStream {
         return this;
     }
 
+    public valid(): boolean {
+        return false;
+    }
+
     /**
      * Translates the buffer to a hex string
      * @param spaces Whether or not to apply spaces to the hex string
